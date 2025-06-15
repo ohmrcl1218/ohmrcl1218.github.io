@@ -162,7 +162,7 @@ function showHeartMessage() {
       </label>
       <div class="message closed">
         <h1>Happy Valentine's Day My Love</h1>
-        <p>${yourLongMessage}</p> 
+        <p>${"Happiestbirthdaylabs"}</p> 
       </div>
     </div>
   `;

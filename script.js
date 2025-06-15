@@ -7,13 +7,13 @@ document.addEventListener("DOMContentLoaded", function () {
   let microphone;
   let audio = new Audio('hbd.mp3');
 
-  // Add candle on click
-  cake.addEventListener("click", function (event) {
-    const rect = cake.getBoundingClientRect();
-    const left = event.clientX - rect.left;
-    const top = event.clientY - rect.top;
-    addCandle(left, top);
-  });
+
+  function updateCandleCount() {
+    const activeCandles = candles.filter(
+      (candle) => !candle.classList.contains("out")
+    ).length;
+    candleCountDisplay.textContent = activeCandles;
+  }
 
   function addCandle(left, top) {
     const candle = document.createElement("div");
@@ -30,50 +30,61 @@ document.addEventListener("DOMContentLoaded", function () {
     updateCandleCount();
   }
 
-  function updateCandleCount() {
-    const activeCandles = candles.filter(
-      (candle) => !candle.classList.contains("out")
-    ).length;
-    candleCountDisplay.textContent = activeCandles;
-  }
+  cake.addEventListener("click", function (event) {
+    const rect = cake.getBoundingClientRect();
+    const left = event.clientX - rect.left;
+    const top = event.clientY - rect.top;
+    addCandle(left, top);
+  });
 
   function isBlowing() {
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     analyser.getByteFrequencyData(dataArray);
-    let sum = dataArray.reduce((a, b) => a + b, 0);
-    return sum / bufferLength > 50; // Adjust sensitivity
+
+    let sum = 0;
+    for (let i = 0; i < bufferLength; i++) {
+      sum += dataArray[i];
+    }
+    let average = sum / bufferLength;
+
+    return average > 50; //ETO CHANGEEEEEE
   }
 
   function blowOutCandles() {
-    if (candles.length === 0) return;
-
     let blownOut = 0;
-    if (isBlowing()) {
-      candles.forEach((candle) => {
-        if (!candle.classList.contains("out") && Math.random() > 0.5) {
-          candle.classList.add("out");
-          blownOut++;
-        }
-      });
-    }
 
-    if (blownOut > 0) updateCandleCount();
+    // Only check for blowing if there are candles and at least one is not blown out
+    if (candles.length > 0 && candles.some((candle) => !candle.classList.contains("out"))) {
+      if (isBlowing()) {
+        candles.forEach((candle) => {
+          if (!candle.classList.contains("out") && Math.random() > 0.5) {
+            candle.classList.add("out");
+            blownOut++;
+          }
+        });
+      }
 
-    // All candles blown out
-    if (candles.every(c => c.classList.contains("out"))) {
-      setTimeout(() => {
-        triggerConfetti();
-        endlessConfetti();
+      if (blownOut > 0) {
+        updateCandleCount();
+      }
+
+      // If all candles are blown out, trigger confetti after a small delay
+      if (candles.every((candle) => candle.classList.contains("out"))) {
+        setTimeout(function() {
+          triggerConfetti();
+          endlessConfetti(); // Start the endless confetti
+        }, 200);
         audio.play();
-        document.getElementById("birthdayPopup").style.display = "flex";
-      }, 200);
+      }
     }
   }
 
-  // Microphone setup
+
+
   if (navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices.getUserMedia({ audio: true })
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
       .then(function (stream) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioContext.createAnalyser();
@@ -83,27 +94,82 @@ document.addEventListener("DOMContentLoaded", function () {
         setInterval(blowOutCandles, 200);
       })
       .catch(function (err) {
-        console.log("Microphone access denied:", err);
+        console.log("Unable to access microphone: " + err);
       });
+  } else {
+    console.log("getUserMedia not supported on your browser!");
   }
-
-  // Popup & letter controls
-  document.getElementById("seeMessageBtn").addEventListener("click", () => {
-    document.getElementById("birthdayPopup").style.display = "none";
-    document.getElementById("birthdayLetter").style.display = "block";
-  });
-
-  document.querySelector(".close-letter").addEventListener("click", () => {
-    document.getElementById("birthdayLetter").style.display = "none";
-  });
 });
 
-// Confetti functions
 function triggerConfetti() {
-  confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+  confetti({
+    particleCount: 100,
+    spread: 70,
+    origin: { y: 0.6 }
+  });
 }
+
 function endlessConfetti() {
-  setInterval(() => {
-    confetti({ particleCount: 20, spread: 90, origin: { y: 0 } });
+  setInterval(function() {
+    confetti({
+      particleCount: 200,
+      spread: 90,
+      origin: { y: 0 }
+    });
   }, 1000);
+}
+
+// After all candles are blown out (inside blowOutCandles()):
+setTimeout(() => {
+  showMessageButton(); // Show "See My Message" button
+}, 1000);
+
+function showMessageButton() {
+  const btn = document.createElement("button");
+  btn.id = "messageBtn";
+  btn.textContent = "See My Message 💌";
+  btn.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background: #ff8fab;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1000;
+  `;
+  document.body.appendChild(btn);
+
+  btn.addEventListener("click", () => {
+    btn.remove();
+    showHeartMessage(); // Trigger heart + message
+  });
+}
+
+function showHeartMessage() {
+  // Append your HTML/CSS for the heart message (see below)
+  const messageHTML = `
+    <div class="container">
+      <label>
+        <div class="heart">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Love_Heart_SVG.svg">
+        </div>
+        <input id="messageState" type="checkbox" style="display:none"/>
+      </label>
+      <div class="message closed">
+        <h1>Happy Valentine's Day My Love</h1>
+        <p>${yourLongMessage}</p> 
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML("beforeend", messageHTML);
+
+  // Trigger heart animation on click
+  document.querySelector(".heart").addEventListener("click", () => {
+    document.getElementById("messageState").checked = true;
+  });
 }

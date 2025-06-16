@@ -51,37 +51,47 @@ document.addEventListener("DOMContentLoaded", function () {
     return average > 50; //ETO CHANGEEEEEE
   }
 
-  function blowOutCandles() {
-    let blownOut = 0;
+  // ... (previous code remains the same until the blowOutCandles function)
 
-    // Only check for blowing if there are candles and at least one is not blown out
-    if (candles.length > 0 && candles.some((candle) => !candle.classList.contains("out"))) {
-      if (isBlowing()) {
-        candles.forEach((candle) => {
-          if (!candle.classList.contains("out") && Math.random() > 0.5) {
-            candle.classList.add("out");
-            blownOut++;
-          }
-        });
-      }
+function blowOutCandles() {
+  let blownOut = 0;
 
-      if (blownOut > 0) {
-        updateCandleCount();
-      }
+  if (candles.length > 0 && candles.some((candle) => !candle.classList.contains("out"))) {
+    if (isBlowing()) {
+      candles.forEach((candle) => {
+        if (!candle.classList.contains("out") && Math.random() > 0.5) {
+          candle.classList.add("out");
+          blownOut++;
+        }
+      });
+    }
 
-      // Modify the part where all candles are blown out (in blowOutCandles function)
-// Replace the setTimeout with this:
-if (candles.every((candle) => candle.classList.contains("out"))) {
-  setTimeout(function() {
-    triggerConfetti();
-    endlessConfetti();
-    showMessagePopup(); // Add this line
-  }, 200);
-  audio.play();
+    if (blownOut > 0) {
+      updateCandleCount();
+    }
+
+    if (candles.every((candle) => candle.classList.contains("out"))) {
+      setTimeout(function() {
+        triggerConfetti();
+        endlessConfetti();
+        showMessagePopup(); // NEW: Add this line to show the popup
+      }, 200);
+      audio.play();
+    }
+  }
 }
 
-
-
+// NEW: Add this function to create the popup
+function showMessagePopup() {
+  const popup = document.createElement('div');
+  popup.className = 'message-popup';
+  popup.innerHTML = `
+    <div class="popup-content">
+      <button class="message-button">See My Message</button>
+    </div>
+  `;
+  document.body.appendChild(popup);
+}
 
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices
@@ -120,21 +130,3 @@ function endlessConfetti() {
     });
   }, 1000);
         }
-
-// Add this after your existing blowOutCandles() function
-function showMessagePopup() {
-  const popup = document.createElement('div');
-  popup.className = 'message-popup';
-  popup.innerHTML = `
-    <div class="popup-content">
-      <h3>All candles blown out! 🎉</h3>
-      <button id="seeMessageBtn">See My Message</button>
-    </div>
-  `;
-  document.body.appendChild(popup);
-
-  document.getElementById('seeMessageBtn').addEventListener('click', () => {
-    window.location.href = 'letter.html';
-  });
-}
-

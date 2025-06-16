@@ -99,7 +99,7 @@ function showMessagePopup() {
   popup.className = 'message-popup';
   popup.innerHTML = `
     <div class="popup-content">
-      <h2>🎉 Yeyyy Happy Birthday bb boi! 🎉</h2>
+      <h2>🎉 Yeyyy! 🎉</h2>
       <a href="letter.html" class="message-button">See My Message →</a>
     </div>
   `;

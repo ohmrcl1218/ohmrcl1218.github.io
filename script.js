@@ -81,16 +81,21 @@ function blowOutCandles() {
   }
 }
 
-// NEW: Add this function to create the popup
 function showMessagePopup() {
   const popup = document.createElement('div');
   popup.className = 'message-popup';
   popup.innerHTML = `
     <div class="popup-content">
-      <button class="message-button">See My Message</button>
+      <h2>🎉 You did it! 🎉</h2>
+      <button class="message-button" id="messageBtn">See My Message →</button>
     </div>
   `;
   document.body.appendChild(popup);
+
+  // Add click event to redirect
+  document.getElementById('messageBtn').addEventListener('click', function() {
+    window.location.href = 'letter.html'; // Redirect to letter.html
+  });
 }
 
   if (navigator.mediaDevices.getUserMedia) {

@@ -220,6 +220,27 @@
       
       isOpen = !isOpen;
     });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const bgMusic = document.getElementById('bgMusic');
+    bgMusic.volume = 0.3; // Lower volume (30%)
+    
+    // Enable audio after first user interaction
+    const enableAudio = () => {
+      bgMusic.play().catch(e => console.log("Autoplay prevented:", e));
+      document.removeEventListener('click', enableAudio);
+      document.removeEventListener('touchstart', enableAudio);
+    };
+    
+    // Start on any click/touch
+    document.addEventListener('click', enableAudio, { once: true });
+    document.addEventListener('touchstart', enableAudio, { once: true });
+    
+    // Also start when heart is clicked (fallback)
+    $(".heart").click(function() {
+      bgMusic.play().catch(e => console.log("Play failed:", e));
+    });
+  });
   </script>
 </body>
 </html>

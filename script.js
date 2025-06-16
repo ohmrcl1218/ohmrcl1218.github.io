@@ -93,11 +93,6 @@ function showMessagePopup() {
   document.body.appendChild(popup);
 }
 
-  // Add click event to redirect
-  document.getElementById('messageBtn').addEventListener('click', function() {
-    window.location.href = 'letter.html'; // Redirect to letter.html
-  });
-}
 
   if (navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices

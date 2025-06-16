@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let analyser;
   let microphone;
   let audio = new Audio('hbd.m4a');
+  let isAudioPlaying = false;
 
 
   function updateCandleCount() {
@@ -13,6 +14,18 @@ document.addEventListener("DOMContentLoaded", function () {
       (candle) => !candle.classList.contains("out")
     ).length;
     candleCountDisplay.textContent = activeCandles;
+
+    if (activeCandles === 1 && !isAudioPlaying) {
+      audio.play();
+      isAudioPlaying = true;
+    }
+    
+    // Stop audio when all candles are blown
+    if (activeCandles === 0 && isAudioPlaying) {
+      audio.pause();
+      audio.currentTime = 0; // Rewind to start
+      isAudioPlaying = false;
+    }
   }
 
   function addCandle(left, top) {

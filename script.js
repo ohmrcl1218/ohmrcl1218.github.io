@@ -69,16 +69,17 @@ document.addEventListener("DOMContentLoaded", function () {
         updateCandleCount();
       }
 
-      // If all candles are blown out, trigger confetti after a small delay
-      if (candles.every((candle) => candle.classList.contains("out"))) {
-        setTimeout(function() {
-          triggerConfetti();
-          endlessConfetti(); // Start the endless confetti
-        }, 200);
-        audio.play();
-      }
-    }
-  }
+      // Modify the part where all candles are blown out (in blowOutCandles function)
+// Replace the setTimeout with this:
+if (candles.every((candle) => candle.classList.contains("out"))) {
+  setTimeout(function() {
+    triggerConfetti();
+    endlessConfetti();
+    showMessagePopup(); // Add this line
+  }, 200);
+  audio.play();
+}
+
 
 
 
@@ -137,13 +138,3 @@ function showMessagePopup() {
   });
 }
 
-// Modify the part where all candles are blown out (in blowOutCandles function)
-// Replace the setTimeout with this:
-if (candles.every((candle) => candle.classList.contains("out"))) {
-  setTimeout(function() {
-    triggerConfetti();
-    endlessConfetti();
-    showMessagePopup(); // Add this line
-  }, 200);
-  audio.play();
-}

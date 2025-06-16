@@ -120,50 +120,30 @@ function endlessConfetti() {
   }, 1000);
         }
 
-// Add this function to create the popup
+// Add this after your existing blowOutCandles() function
 function showMessagePopup() {
   const popup = document.createElement('div');
-  popup.className = 'birthday-popup';
+  popup.className = 'message-popup';
   popup.innerHTML = `
     <div class="popup-content">
-      <h2>You did it! 🎊</h2>
+      <h3>All candles blown out! 🎉</h3>
       <button id="seeMessageBtn">See My Message</button>
     </div>
   `;
   document.body.appendChild(popup);
 
-  // Redirect to letter.html when button is clicked
   document.getElementById('seeMessageBtn').addEventListener('click', () => {
     window.location.href = 'letter.html';
   });
 }
 
-// Modify the blowOutCandles function to trigger the popup
-function blowOutCandles() {
-  let blownOut = 0;
-
-  if (candles.length > 0 && candles.some((candle) => !candle.classList.contains("out"))) {
-    if (isBlowing()) {
-      candles.forEach((candle) => {
-        if (!candle.classList.contains("out") && Math.random() > 0.5) {
-
-          candle.classList.add("out");
-          blownOut++;
-        }
-      });
-    }
-
-    if (blownOut > 0) {
-      updateCandleCount();
-    }
-
-    if (candles.every((candle) => candle.classList.contains("out"))) {
-      setTimeout(function() {
-        triggerConfetti();
-        endlessConfetti();
-        showMessagePopup(); // Add this line
-      }, 200);
-      audio.play();
-    }
-  }
-  }
+// Modify the part where all candles are blown out (in blowOutCandles function)
+// Replace the setTimeout with this:
+if (candles.every((candle) => candle.classList.contains("out"))) {
+  setTimeout(function() {
+    triggerConfetti();
+    endlessConfetti();
+    showMessagePopup(); // Add this line
+  }, 200);
+  audio.play();
+}

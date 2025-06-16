@@ -12,65 +12,55 @@
       margin: 0;
       font-family: 'Hind', sans-serif;
       background-color: #fce4ec;
-      transition: background-color 2s;
+      transition: background-color 1s;
+      overflow: hidden;
     }
 
     .container {
       position: relative;
       width: 100%;
       height: 100vh;
-      overflow: hidden;
-      transition: background-color 3s;
+      transition: background-color 1s;
     }
 
     .heart {
       position: absolute;
       left: 50%;
       top: 50%;
-      text-align: center;
       transform: translate(-50%, -50%);
-      transition: transform 2s;
-      z-index: 1;
+      z-index: 2;
+      cursor: pointer;
+      transition: all 0.5s ease-out;
     }
 
     .heart > img {
       width: 80px;
       height: auto;
       filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5));
-      transition: all 0.5s;
+      transition: all 0.3s;
     }
 
     .message {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) scale(0);
       width: 80%;
       max-width: 600px;
+      max-height: 80vh;
       padding: 40px;
       background-color: white;
       border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       opacity: 0;
-      transition: all 0.5s;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      overflow-y: auto;
+      z-index: 1;
     }
 
-    .message.closed {
-      transform: translate(-50%, -50%) scale(0.5);
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .message.no-anim {
-      animation: none !important;
-    }
-
-    .message.openNor {
-      animation: openAnim 1s forwards;
-    }
-
-    .message.closeNor {
-      animation: closeAnim 1s forwards;
+    .message.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
     }
 
     h1 {
@@ -100,50 +90,24 @@
     }
 
     /* Heart animations */
-    .heart.openHer {
-      animation: openHeart 1s forwards;
+    .heart.beat {
+      animation: heartbeat 1s;
     }
 
-    .heart.closeHer {
-      animation: closeHeart 1s forwards;
-    }
-
-    .heart.openedHer {
-      animation: heartbeat 1.5s infinite;
-    }
-
-    /* Keyframes */
-    @keyframes openAnim {
-      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    }
-
-    @keyframes closeAnim {
-      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-    }
-
-    @keyframes openHeart {
-      0% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.3); }
-      100% { transform: translate(-50%, -50%) scale(1); }
-    }
-
-    @keyframes closeHeart {
-      0% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(0.7); }
-      100% { transform: translate(-50%, -50%) scale(1); }
+    .heart.at-bottom {
+      top: calc(50% + 180px);
+      transform: translate(-50%, 0);
     }
 
     @keyframes heartbeat {
       0% { transform: translate(-50%, -50%) scale(1); }
-      25% { transform: translate(-50%, -50%) scale(1.1); }
+      25% { transform: translate(-50%, -50%) scale(1.2); }
       50% { transform: translate(-50%, -50%) scale(1); }
-      75% { transform: translate(-50%, -50%) scale(1.1); }
+      75% { transform: translate(-50%, -50%) scale(1.2); }
       100% { transform: translate(-50%, -50%) scale(1); }
     }
 
-    /* Falling hearts animation */
+    /* Falling hearts */
     .falling-hearts {
       position: fixed;
       top: 0;
@@ -151,7 +115,7 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
-      z-index: -1;
+      z-index: 0;
     }
 
     .falling-hearts span {
@@ -166,19 +130,23 @@
     }
 
     @keyframes falling {
-      0% {
-        transform: translateY(-10vh) rotate(0deg);
-        opacity: 0;
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .message {
+        padding: 30px 20px;
+        width: 90%;
       }
-      10% {
-        opacity: 1;
+      h1 {
+        font-size: 2rem;
       }
-      90% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0;
+      .heart.at-bottom {
+        top: calc(50% + 150px);
       }
     }
   </style>
@@ -188,13 +156,10 @@
   <div class="falling-hearts" id="fallingHearts"></div>
 
   <div class="container">
-    <label>
-      <div class="heart">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Love_Heart_SVG.svg" alt="Heart">
-      </div>
-      <input id="messageState" type="checkbox" style="display:none"/>
-    </label>
-    <div class="message closed no-anim">
+    <div class="heart">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/Love_Heart_SVG.svg" alt="Heart">
+    </div>
+    <div class="message">
       <h1>Happy Valentine's Day My Love</h1>
       <p>You are someone who came into my life unexpectedly, you brought back my smile and you're helping me pick up the broken pieces of my heart. I thought I won't love again and give myself time but here I am falling in love with you everyday.</p>
       <p>Today, February 14, a day away of 4 months since we met each other and luckily It's Valentine's day. I wrote this to remind you how amazing and loving of a girlfriend you are (I know wala pa but hehe). I know we have our fair share of misunderstandings but always know I love you always.</p>
@@ -206,48 +171,45 @@
 
   <script>
     // Create falling hearts
-    const fallingHearts = document.getElementById('fallingHearts');
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 15; i++) {
       const heart = document.createElement('span');
       heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      heart.style.animationDuration = (Math.random() * 10 + 5) + 's';
       heart.style.animationDelay = Math.random() * 5 + 's';
-      heart.style.width = (Math.random() * 20 + 10) + 'px';
+      heart.style.width = (Math.random() * 25 + 15) + 'px';
       heart.style.height = heart.style.width;
-      fallingHearts.appendChild(heart);
+      heart.style.opacity = Math.random() * 0.5 + 0.3;
+      document.getElementById('fallingHearts').appendChild(heart);
     }
 
-    // jQuery animations
-    $("#messageState").on("change", (x) => {
-      $(".message").removeClass("openNor").removeClass("closeNor");
-      if ($("#messageState").is(":checked")) {
-        $(".message").removeClass("closed").removeClass("no-anim").addClass("openNor");
-        $(".heart").removeClass("closeHer").removeClass("openedHer").addClass("openHer");
-        $(".container").stop().animate({"backgroundColor": "#f48fb1"}, 3000);
-      } else {
-        $(".message").removeClass("no-anim").addClass("closeNor");
-        $(".heart").removeClass("openHer").removeClass("openedHer").addClass("closeHer");
-        $(".container").stop().animate({"backgroundColor": "#fce4ec"}, 2000);
-      }
-    });
-
-    $(".message").on('webkitAnimationEnd oanimationend msAnimationEnd animationend', function(e) {
-      if ($(".message").hasClass("closeNor"))
-        $(".message").addClass("closed");
-      $(".message").removeClass("openNor").removeClass("closeNor").addClass("no-anim");
-    });
-
-    $(".heart").on('webkitAnimationEnd oanimationend msAnimationEnd animationend', function(e) {
-      if (!$(".heart").hasClass("closeHer"))
-        $(".heart").addClass("openedHer");
-      else
-        $(".heart").addClass("no-anim");
-      $(".heart").removeClass("openHer").removeClass("closeHer");
-    });
-
-    // Click heart to toggle message
+    // Toggle letter on heart click
+    let isOpen = false;
     $(".heart").click(function() {
-      $("#messageState").prop("checked", !$("#messageState").is(":checked")).trigger("change");
+      if (!isOpen) {
+        // Open letter
+        $(".heart").addClass("beat");
+        $(".message").addClass("open");
+        $("body").css("background-color", "#f48fb1");
+        
+        // Move heart to bottom after animation
+        setTimeout(() => {
+          $(".heart").addClass("at-bottom");
+        }, 500);
+        
+      } else {
+        // Close letter
+        $(".heart").addClass("beat");
+        $(".message").removeClass("open");
+        $("body").css("background-color", "#fce4ec");
+        $(".heart").removeClass("at-bottom");
+      }
+      
+      // Remove beat animation after it completes
+      setTimeout(() => {
+        $(".heart").removeClass("beat");
+      }, 1000);
+      
+      isOpen = !isOpen;
     });
   </script>
 </body>

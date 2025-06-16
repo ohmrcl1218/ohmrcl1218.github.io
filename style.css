@@ -248,6 +248,7 @@ body {
 
 .message-button {
   background: #7B020B;
+  text-decoration: none;
   color: white;
   border: none;
   padding: 15px 30px;

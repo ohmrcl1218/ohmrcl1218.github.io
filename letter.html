@@ -98,8 +98,10 @@
     }
 
     .heart.at-bottom {
-      top: calc(50% + 180px);
-      transform: translate(-50%, 0);
+      top: 100%; /* Positions at bottom of parent container */
+  left: 50%;
+  transform: translateX(-50%); /* Only translate horizontally */
+  margin-top: 20px;
     }
 
     @keyframes heartbeat {

@@ -87,10 +87,11 @@ function showMessagePopup() {
   popup.innerHTML = `
     <div class="popup-content">
       <h2>🎉 You did it! 🎉</h2>
-      <button class="message-button" id="messageBtn">See My Message →</button>
+      <a href="letter.html" class="message-button">See My Message →</a>
     </div>
   `;
   document.body.appendChild(popup);
+}
 
   // Add click event to redirect
   document.getElementById('messageBtn').addEventListener('click', function() {
